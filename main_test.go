@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 )
 
@@ -23,11 +25,22 @@ func TestGreetingsHandler_Version1(t *testing.T) {
 			status, http.StatusOK)
 	}
 
-	// Check the response body is what we expect
-	expected := `{"greetings":"Hello there","version":1}`
-	if rr.Body.String() != expected {
+	// Decode the response
+	var actual Response
+	if err := json.Unmarshal(rr.Body.Bytes(), &actual); err != nil {
+		t.Fatalf("could not decode response: %v", err)
+	}
+
+	// Expected response
+	expected := Response{
+		Greetings: "Hello there",
+		Version:   1,
+	}
+
+	// Compare the actual response to the expected response
+	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("handler returned unexpected body: got %v want %v",
-			rr.Body.String(), expected)
+			actual, expected)
 	}
 }
 
@@ -48,11 +61,21 @@ func TestGreetingsHandler_InvalidVersion(t *testing.T) {
 			status, http.StatusOK)
 	}
 
-	// Check the response body is what we expect for 2nd version
-	expected := `{"error":"2nd version is invalid"}`
-	if rr.Body.String() != expected {
+	// Decode the response
+	var actual Response
+	if err := json.Unmarshal(rr.Body.Bytes(), &actual); err != nil {
+		t.Fatalf("could not decode response: %v", err)
+	}
+
+	// Expected response for 2nd version
+	expected := Response{
+		Error: "2nd version is invalid",
+	}
+
+	// Compare the actual response to the expected response
+	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("handler returned unexpected body: got %v want %v",
-			rr.Body.String(), expected)
+			actual, expected)
 	}
 
 	// Test with another version
@@ -64,11 +87,20 @@ func TestGreetingsHandler_InvalidVersion(t *testing.T) {
 	rr = httptest.NewRecorder()
 	handler.ServeHTTP(rr, req)
 
-	// Check the response body is what we expect for 10th version
-	expected = `{"error":"10th version is invalid"}`
-	if rr.Body.String() != expected {
+	// Decode the response
+	if err := json.Unmarshal(rr.Body.Bytes(), &actual); err != nil {
+		t.Fatalf("could not decode response: %v", err)
+	}
+
+	// Expected response for 10th version
+	expected = Response{
+		Error: "10th version is invalid",
+	}
+
+	// Compare the actual response to the expected response
+	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("handler returned unexpected body: got %v want %v",
-			rr.Body.String(), expected)
+			actual, expected)
 	}
 }
 
@@ -89,10 +121,20 @@ func TestHealthyHandler(t *testing.T) {
 			status, http.StatusOK)
 	}
 
-	// Check the response body is what we expect
-	expected := `{"healthy":"true"}`
-	if rr.Body.String() != expected {
+	// Decode the response
+	var actual Response
+	if err := json.Unmarshal(rr.Body.Bytes(), &actual); err != nil {
+		t.Fatalf("could not decode response: %v", err)
+	}
+
+	// Expected response
+	expected := Response{
+		Healthy: "true",
+	}
+
+	// Compare the actual response to the expected response
+	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("handler returned unexpected body: got %v want %v",
-			rr.Body.String(), expected)
+			actual, expected)
 	}
 }
