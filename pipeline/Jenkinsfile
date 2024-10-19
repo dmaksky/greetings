@@ -1,5 +1,7 @@
 pipeline {
-  agent any
+  agent {
+    label 'docker_packer_agent'
+  }
   tools { go '1.23' }
   stages {
     stage('Checkout') {
