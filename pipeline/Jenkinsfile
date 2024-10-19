@@ -1,10 +1,8 @@
 pipeline {
-  agent {
-    label 'docker_packer_agent'
-  }
+  agent any
   environment {
     YC_TOKEN = credentials('yc_iam_token')
-    YC_FOLDER_ID = credential('yc_folder_id') 
+    YC_FOLDER_ID = credentials('yc_folder_id') 
   }
   tools { go '1.23' }
   stages {
@@ -18,9 +16,15 @@ pipeline {
         sh 'go test'
       }
     }
-    stage('Build') {
+    stage('Build application') {
       steps {
         sh 'go build'
+      }
+    }
+    stage('Build image') {
+      steps {
+        sh 'packer build pipeline/packer/greetings.pkr.hcl > packer.txt'
+        sh 'grep ID: packer.txt | grep -E -o \'[0-9]{8}\' > do_image.txt'
       }
     }
   }
