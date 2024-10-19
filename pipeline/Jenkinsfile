@@ -24,8 +24,7 @@ pipeline {
     stage('Build image') {
       steps {
         sh 'packer init pipeline/packer/greetings.pkr.hcl'
-        sh 'packer build pipeline/packer/greetings.pkr.hcl > packer.txt'
-        sh 'grep ID: packer.txt | grep -E -o \'[0-9]{8}\' > do_image.txt'
+        sh 'packer build pipeline/packer/greetings.pkr.hcl'
       }
     }
   }

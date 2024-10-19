@@ -18,6 +18,9 @@ source "yandex" "image_builder" {
   source_image_family      = "ubuntu-24-04-lts"
   ssh_username             = "ubuntu"
   use_ipv4_nat             = "true"
+
+  image_name               = "greetings"
+  image_description        = "Image for greetings app based on Ubuntu 24-04 LTS"
 }
 
 build {
