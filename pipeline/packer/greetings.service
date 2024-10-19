@@ -1,0 +1,14 @@
+[Unit]
+Description=Greetings Go HTTP Server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/greetings/greetings
+Restart=on-failure
+User=greetings
+WorkingDirectory=/opt/greetings
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target
