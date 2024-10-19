@@ -2,6 +2,10 @@ pipeline {
   agent {
     label 'docker_packer_agent'
   }
+  environment {
+    YC_TOKEN = credentials('yc_iam_token')
+    YC_FOLDER_ID = credential('yc_folder_id') 
+  }
   tools { go '1.23' }
   stages {
     stage('Checkout') {
