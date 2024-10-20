@@ -32,6 +32,7 @@ pipeline {
     stage("Test and destroy the instance") {
       steps {
         sh '''#!/bin/bash -l
+        sleep 240
         curl -D - -v \$(<do_ip.txt):8000/greetings?version=1 | grep "HTTP/1.1 200"
         curl -D - -v \$(<do_ip.txt):8000/greetings?version=3 | grep "HTTP/1.1 404"
         terraform destroy -force
