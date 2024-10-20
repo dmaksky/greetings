@@ -2,15 +2,12 @@ pipeline {
   agent any
   environment {
     YC_FOLDER_ID = credentials('yc_folder_id') 
+    YC_SUBNET_ID = credentials('yc_subnet_id')
     YC_ACCOUNT_KEY_FILE = credentials('yc_account_key_file')
+    SSH_PUBLIC_KEY = credentials('ssh_public_key')
   }
   tools { go '1.23' }
   stages {
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
-    }
     stage('Unit tests') {
       steps {
         sh 'go test'
@@ -25,6 +22,11 @@ pipeline {
       steps {
         sh 'packer init pipeline/packer/greetings.pkr.hcl'
         sh 'packer build pipeline/packer/greetings.pkr.hcl'
+      }
+    }
+    stage("Create instance") {
+      steps {
+        sh 'bash pipeline/testing/tf_testing.sh'
       }
     }
   }
