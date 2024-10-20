@@ -35,7 +35,22 @@ pipeline {
         sleep 240
         curl -D - -v \$(<do_ip.txt):8000/greetings?version=1 | grep "HTTP/1.1 200"
         curl -D - -v \$(<do_ip.txt):8000/greetings?version=3 | grep "HTTP/1.1 404"
-        terraform destroy -force
+        terraform destroy -auto-approve
+        '''
+      }
+    }
+    stage("Create LB") {
+      steps {
+        sh 'bash pipeline/production/tf_prod.sh'
+      }
+    }
+    stage("Test LB") {
+      steps {
+        sh '''#!/bin/bash -l
+        sleep 240
+        curl -D - -v \$(<do_lb_ip.txt)/greetings?version=1 | grep "HTTP/1.1 200"
+        curl -D - -v \$(<do_lb_ip.txt)/greetings?version=3 | grep "HTTP/1.1 404"
+        terraform destroy -auto-approve
         '''
       }
     }
