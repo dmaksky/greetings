@@ -14,7 +14,7 @@ variables {
 }
 
 locals {
-  current_date = formatdate("YYYYMMDD", timestamp())
+  current_date = formatdate("YYYYMMDD-hhmmss", timestamp())
 }
 
 source "yandex" "image_builder" {
