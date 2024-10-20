@@ -51,7 +51,7 @@ func greetingsHandler(w http.ResponseWriter, r *http.Request) {
 		response := Response{
 			Error: fmt.Sprintf("%s version is invalid", ordinal),
 		}
-		http.Error(w, "404 Not Found", http.StatusNotFound)
+		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(response)
 	}
 }
